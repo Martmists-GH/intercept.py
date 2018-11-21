@@ -6,11 +6,12 @@ python:
   - "3.7"
 
 install:
+  - "pip install -r requirements.txt"
   - "pip install -r requirements-ci.txt"
 
 script:
   # ignore output from install
-  - python setup.py install >> /dev/null
+  # TODO: - python setup.py install >> /dev/null
   - snekchek
 
 cache:
