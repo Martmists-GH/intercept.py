@@ -18,7 +18,7 @@ async def event_chat(event: ChatEvent):
 client.run()
 ```
 
-Simple custom client:
+Simple custom client using [prompt-toolkit](https://github.com/prompt-toolkit/python-prompt-toolkit):
 ```py
 from prompt_toolkit import prompt
 from intercept import Client, DataFormat, MessageEvent
@@ -34,7 +34,10 @@ async def on_event(event):
 async def event_ready():
     while client._do_loop:  # pylint: disable=protected-access
         text = await prompt(" >> ", async_=True)
-        await client.command(text)
+        if text == "quit":
+            client.stop()
+        else:
+            await client.command(text)
 
 client.run(backend='asyncio')
 ```
