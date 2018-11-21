@@ -1,0 +1,11 @@
+https://github.com/izunadevs/snekchek/archive/master.zip
+
+flake8
+flake8-tidy-imports
+flake8-string-format
+
+pylint
+
+vulture
+
+isort
