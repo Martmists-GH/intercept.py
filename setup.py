@@ -6,7 +6,7 @@ with open("requirements.txt") as f:
     REQUIREMENTS = f.readlines()
 
 with open("README.md") as f:
-    README = f.readlines()
+    README = f.read()
 
 setup(
     name="intercept",
