@@ -1,11 +1,11 @@
 [all]
 # Todo: pytest when tests are needed
-linters = flake8, pylint, isort, vulture
+linters = flake8, pylint, isort, vulture, pyroma
 
 [flake8]
 max-line-length=120
 exclude=.git
-ignore=S101,E731,E303
+ignore=S101,E731,E303,W504
 
 [isort]
 line_length=120
