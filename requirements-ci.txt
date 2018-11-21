@@ -10,3 +10,6 @@ vulture
 pyroma
 
 isort
+
+wheel
+twine

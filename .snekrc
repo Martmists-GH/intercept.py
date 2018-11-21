@@ -1,6 +1,6 @@
 [all]
 # Todo: pytest when tests are needed
-linters = flake8, pylint, isort, vulture, pyroma
+linters = flake8, pylint, isort, vulture, pyroma, pypi
 
 [flake8]
 max-line-length=120
