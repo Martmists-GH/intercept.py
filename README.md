@@ -21,7 +21,11 @@ client.run()
 Simple custom client using [prompt-toolkit](https://github.com/prompt-toolkit/python-prompt-toolkit):
 ```py
 from prompt_toolkit import prompt
+from prompt_toolkit.eventloop.defaults import use_asyncio_event_loop
+from prompt_toolkit.patch_stdout import patch_stdout
 from intercept import Client, DataFormat, MessageEvent
+
+use_asyncio_event_loop()
 
 client = Client(username, password, fmt=DataFormat.ANSI)
 
@@ -33,7 +37,9 @@ async def on_event(event):
 @client.event
 async def event_ready():
     while client._do_loop:  # pylint: disable=protected-access
-        text = await prompt(" >> ", async_=True)
+        with patch_stdout():
+            text = await prompt(" >> ", async_=True)
+
         if text == "quit":
             client.stop()
         else:

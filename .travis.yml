@@ -5,9 +5,14 @@ dist: xenial
 python:
   - "3.7"
 
+before_install:
+  - sudo apt-get update -qq
+  - sude apt-get install -y pandoc
+
 install:
   - "pip install -r requirements.txt"
   - "pip install -r requirements-ci.txt"
+  - "pandoc -f markdown -t rst -o README.rst README.md"
 
 script:
   # ignore output from install
