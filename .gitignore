@@ -2,3 +2,6 @@
 config.txt
 
 .idea/
+*.egg-info/
+build/
+dist/

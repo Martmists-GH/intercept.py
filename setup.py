@@ -1,11 +1,11 @@
 from setuptools import setup
 
-VERSION = "0.0.1"
+VERSION = "0.0.2"
 
 with open("requirements.txt") as f:
     REQUIREMENTS = f.readlines()
 
-with open("README.md") as f:
+with open("README.rst") as f:
     README = f.read()
 
 setup(
