@@ -9,7 +9,7 @@ with open("README.md") as f:
     README = f.read()
 
 setup(
-    name="intercept",
+    name="intercept.py",
     author="martmists",
     author_email="mail@martmists.com",
     maintainer="martmists",
