@@ -2,6 +2,8 @@
 from dataclasses import field, dataclass
 from typing import Any, Dict
 
+from intercept.utils import REGEXES
+
 
 @dataclass
 class Event:
@@ -86,3 +88,15 @@ class TraceCompleteEvent(MessageEvent):
 class ChatEvent(MessageEvent):
     event: str
     msg: str
+
+    @property
+    def chat(self) -> str:
+        return REGEXES["chat_event"].match(self.msg).group("chat")
+
+    @property
+    def author(self) -> str:
+        return REGEXES["chat_event"].match(self.msg).group("author")
+
+    @property
+    def message(self) -> str:
+        return REGEXES["chat_event"].match(self.msg).group("message")

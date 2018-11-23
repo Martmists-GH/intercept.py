@@ -15,7 +15,6 @@ try:
     import ujson as json
 except ImportError:
     import json
-
     print("Install ujson for a performance boost while reading data")
 
 

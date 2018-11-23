@@ -4,6 +4,10 @@ import re
 # External Libraries
 from colorama import Fore
 
+REGEXES = {
+    "chat_event": re.compile(r"\((?P<chat>\s+?)\) (?P<author>\s+?): (?P<message>.+)")
+}
+
 CONVERT = {
     '¬w': Fore.LIGHTWHITE_EX,
     '¬W': Fore.LIGHTBLACK_EX,

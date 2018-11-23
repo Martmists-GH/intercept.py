@@ -28,7 +28,7 @@ class Client:
     def __getattr__(self, item):
         if item in self._events:
             return self._events[item]
-        return super().__getattr__(item)  # pylint: disable=no-member
+        return super().__getattribute__(item)
 
     async def wait_for(self, event=None, command=None, type_: T = Event) -> T:
         return await self.handler.wait_for(event, command, type_)
