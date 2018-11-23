@@ -4,7 +4,7 @@ linters = flake8, pylint, isort, vulture, pyroma, pypi
 
 [flake8]
 max-line-length = 120
-exclude = .git
+exclude = .git, examples
 ignore = S101,E731,E303,W504
 
 [isort]
