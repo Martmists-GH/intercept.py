@@ -1,7 +1,12 @@
+# flake8: noqa
+# pylint: skip-file
+
+# External Libraries
 from prompt_toolkit import prompt
 from prompt_toolkit.eventloop.defaults import use_asyncio_event_loop
 from prompt_toolkit.patch_stdout import patch_stdout
 
+# Intercept Client Internals
 from intercept import Client, DataFormat, MessageEvent
 
 use_asyncio_event_loop()

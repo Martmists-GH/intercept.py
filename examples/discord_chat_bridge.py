@@ -1,7 +1,13 @@
-import anyio
-from discord import Client as DClient, Message
+# flake8: noqa
+# pylint: skip-file
 
-from intercept import Client, DataFormat, ChatEvent
+# External Libraries
+import anyio
+from discord import Client as DClient
+from discord import Message
+
+# Intercept Client Internals
+from intercept import Client, ChatEvent, DataFormat
 
 # Intercept settings
 username = "abc"

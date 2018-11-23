@@ -65,6 +65,12 @@ class APIHandler:
         while self._do_loop:
             # Read a single line
             line = await self._sock.receive_until(b"\n", self._buf_size)
+
+            if not line:
+                print("Server shutting down.")
+                self._do_loop = False
+                break
+
             data = json.loads(line.decode('utf-8'))
 
             if "msg" in data:

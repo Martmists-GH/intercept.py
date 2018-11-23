@@ -1,4 +1,8 @@
-from intercept import Client, DataFormat, ChatEvent
+# flake8: noqa
+# pylint: skip-file
+
+# Intercept Client Internals
+from intercept import Client, ChatEvent, DataFormat
 
 username = "abc"
 password = "abc"
