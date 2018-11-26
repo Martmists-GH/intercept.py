@@ -38,5 +38,5 @@ setup(
         "Topic :: Communications :: Chat",
         "Topic :: Software Development :: Libraries :: Python Modules"
     ],
-    python_requires=">=3.4"
+    python_requires=">=3.6"
 )
