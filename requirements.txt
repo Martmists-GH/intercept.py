@@ -1,2 +1,2 @@
-anyio
-colorama
+anyio>=1.0.0
+colorama>=0.4.1
