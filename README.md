@@ -1,7 +1,7 @@
 # Intercept.py
 Python library for [intercept](https://bubmet.itch.io/intercept), a game by [bubmet](https://github.com/bubmet)
 
-Styled after [discord.py](https://github.com/Rapptz/discord.py) (async), this library aims to give users a customizable experience with the game.
+Styled after [discord.py](https://github.com/Rapptz/discord.py), this library aims to give users a customizable experience with the game.
 
 # Examples
 
@@ -53,3 +53,5 @@ async def event_ready():
 
 client.run(backend='asyncio')
 ```
+
+More examples can be found [here](https://github.com/martmists/intercept.py/tree/master/examples)
