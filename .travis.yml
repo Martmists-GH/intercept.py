@@ -3,6 +3,9 @@ language: python
 dist: xenial
 
 python:
+- "3.4"
+- "3.5"
+- "3.6"
 - "3.7"
 
 before_install:
@@ -10,6 +13,10 @@ before_install:
 - sudo apt-get install -y pandoc
 
 install:
+- "if [[ -z $(python -V | grep "Python 3.7") ]]
+   then 
+       echo 'dataclasses' >> requirements.txt
+   fi"
 - "pip install -r requirements.txt"
 - "pip install -r requirements-ci.txt"
 - "pandoc -f markdown -t rst -o README.rst README.md"
