@@ -132,7 +132,7 @@ class APIHandler:
         self._locks.append(entry)
         await lock.wait()
 
-        assert isinstance(entry["result"], type_)
+        assert isinstance(entry["result"], (type_, ErrorEvent))
 
         return entry["result"]
 
