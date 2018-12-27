@@ -101,3 +101,16 @@ class ChatEvent(MessageEvent):
     @property
     def message(self) -> str:
         return REGEXES["chat_event"].match(self.msg).group("message")
+
+
+@dataclass
+class ErrorEvent(Event):
+    event: str
+    success: bool
+    error: str
+
+
+@dataclass
+class ConfigEvent(Event):
+    event: str
+    cfg: Dict[str, Any] = field(default_factory=dict)

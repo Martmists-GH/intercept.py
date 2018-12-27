@@ -8,7 +8,7 @@ import anyio
 # Intercept Client Internals
 from intercept.data_format import DataFormat
 from intercept.events import (Event, AuthEvent, ChatEvent, InfoEvent, CommandEvent, ConnectEvent, BroadcastEvent,
-                              ConnectedEvent, TraceStartEvent, TraceCompleteEvent)
+                              ConnectedEvent, TraceStartEvent, TraceCompleteEvent, ConfigEvent, ErrorEvent)
 from intercept.utils import without_color_codes, converted_color_codes
 
 try:
@@ -31,7 +31,9 @@ class APIHandler:
         'broadcast': BroadcastEvent,
         'traceStart': TraceStartEvent,
         'traceComplete': TraceCompleteEvent,
-        'chat': ChatEvent
+        'chat': ChatEvent,
+        'error': ErrorEvent,
+        'cfg': ConfigEvent
     }
 
     def __init__(self, client, fmt: DataFormat = DataFormat.CLEAN, bot=True, bufsize: int = 2 ** 24):

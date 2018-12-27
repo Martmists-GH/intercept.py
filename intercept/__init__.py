@@ -1,4 +1,4 @@
-from intercept.api_handler import APIHandler
+from intercept.api_handler import APIHandler, json
 from intercept.client import Client
 from intercept.data_format import DataFormat
 from intercept.events import (AuthEvent, BroadcastEvent, ChatEvent, CommandEvent, ConnectData, ConnectEvent,
@@ -8,4 +8,4 @@ __all__ = (
     "Client", "Event", "AuthEvent", "BroadcastEvent", "ChatEvent",
     "CommandEvent", "InfoEvent", "MessageEvent", "ConnectData",
     "ConnectedEvent", "ConnectEvent", "TraceCompleteEvent",
-    "TraceStartEvent", "DataFormat", "APIHandler")
+    "TraceStartEvent", "DataFormat", "APIHandler", "json")
