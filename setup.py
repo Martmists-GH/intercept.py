@@ -1,7 +1,7 @@
 # External Libraries
 from setuptools import setup
 
-VERSION = "0.1.0"
+VERSION = "0.1.1"
 
 with open("requirements.txt") as f:
     REQUIREMENTS = f.readlines()
