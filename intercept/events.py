@@ -1,6 +1,6 @@
 # Stdlib
 from dataclasses import field, dataclass
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 # Intercept Client Internals
 from intercept.utils import REGEXES
@@ -30,37 +30,49 @@ class InfoEvent(Event):
 class AuthEvent(Event):
     event: str
     success: bool
-    token: str
-    cfg: dict
+    token: str = None
+    player: str = None
 
 
 @dataclass
-class ConnectData:
+class SystemInfo:
+    id: str
     ip: str
-    conn: str
+    hostname: str
+    type: str
 
 
 @dataclass
-class ConnectEvent(MessageEvent):
+class SystemEvent(Event):
     event: str
     success: bool
-    msg: str
-    player: ConnectData
+    systems: List[SystemInfo] = field(default_factory=list)
+
+    def __post_init__(self):
+        self.systems = list(map(lambda x: SystemInfo(**x), self.systems))
+
+
+@dataclass
+class ConnectEvent(Event):
+    event: str
+    success: bool
     cfg: Dict[str, Any] = field(default_factory=dict)
-
-
-@dataclass
-class CommandEvent(MessageEvent):
-    event: str
-    success: bool
-    cmd: str
-    msg: str
+    clink: List[str] = field(default_factory=list)
 
 
 @dataclass
 class ConnectedEvent(Event):
     event: str
-    player: ConnectData
+    hostname: str
+    user: str
+    access: bool
+
+
+@dataclass
+class CommandEvent(Event):
+    event: str
+    success: bool
+    cmd: str
 
 
 @dataclass

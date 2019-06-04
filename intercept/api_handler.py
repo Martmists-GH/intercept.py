@@ -1,14 +1,16 @@
 # Stdlib
 import inspect
+import traceback
 from typing import T, Any, Dict, List, Type
 
 # External Libraries
 import anyio
+import asyncwebsockets as aws
 
 # Intercept Client Internals
 from intercept.data_format import DataFormat
 from intercept.events import (Event, AuthEvent, ChatEvent, InfoEvent, CommandEvent, ConnectEvent, BroadcastEvent,
-                              ConnectedEvent, TraceStartEvent, TraceCompleteEvent)
+                              ConnectedEvent, TraceStartEvent, TraceCompleteEvent, SystemEvent)
 from intercept.utils import without_color_codes, converted_color_codes
 
 try:
@@ -19,9 +21,6 @@ except ImportError:
 
 
 class APIHandler:
-    HOST = "209.97.136.54"
-    PORT = 13373
-
     EVENTS: Dict[str, Type[Event]] = {
         'info': InfoEvent,
         'auth': AuthEvent,
@@ -31,7 +30,8 @@ class APIHandler:
         'broadcast': BroadcastEvent,
         'traceStart': TraceStartEvent,
         'traceComplete': TraceCompleteEvent,
-        'chat': ChatEvent
+        'chat': ChatEvent,
+        'systems': SystemEvent,
     }
 
     def __init__(self, client, fmt: DataFormat = DataFormat.CLEAN, bot=True, bufsize: int = 2 ** 24):
@@ -40,7 +40,7 @@ class APIHandler:
         self._buf_size = bufsize
         self._do_loop = False
         self._end_loop = True
-        self._sock: anyio.abc.SocketStream = None
+        self._sock: aws.Websocket = None
         self._messages: List[bytes] = []
         self._locks: List[Dict[str, Any]] = []
         self._fmt = fmt
@@ -62,51 +62,51 @@ class APIHandler:
         print(data)
 
     async def _read_loop(self):
-        while self._do_loop:
-            # Read a single line
-            line = await self._sock.receive_until(b"\n", self._buf_size)
+        async with aws.open_websocket("wss://intercept.mudjs.net/ws") as ws:
+            self._sock = ws
+            try:
+                async for evt in ws:
+                    # Read a single line
+                    # line = await ws
+                    data = json.loads(evt.data)
 
-            if not line:
-                print("Server shutting down.")
-                self._do_loop = False
-                break
+                    if "msg" in data:
+                        data["msg"] = self._format(data["msg"])
 
-            data = json.loads(line.decode('utf-8'))
+                    event = data['event']
+                    built = self._build_event(data)
 
-            if "msg" in data:
-                data["msg"] = self._format(data["msg"])
+                    if not built:
+                        continue
 
-            event = data['event']
-            built = self._build_event(data)
+                    if hasattr(self.client, f"event_{event}"):
+                        func = getattr(self.client, f"event_{event}")
+                        res = func(built)
+                        if inspect.isawaitable(res):
+                            await res
 
-            if not built:
-                continue
+                    if hasattr(self.client, "on_event"):
+                        func = getattr(self.client, "on_event")
+                        res = func(built)
+                        if inspect.isawaitable(res):
+                            await res
 
-            if hasattr(self.client, f"event_{event}"):
-                func = getattr(self.client, f"event_{event}")
-                res = func(built)
-                if inspect.isawaitable(res):
-                    await res
-
-            if hasattr(self.client, "on_event"):
-                func = getattr(self.client, "on_event")
-                res = func(built)
-                if inspect.isawaitable(res):
-                    await res
-
-            if self._locks:
-                for entry in self._locks:
-                    if entry['function'](data):
-                        self._locks.remove(entry)
-                        entry["result"] = built
-                        await entry['lock'].set()
-        self._end_loop = True
+                    if self._locks:
+                        for entry in self._locks:
+                            if entry['function'](data):
+                                self._locks.remove(entry)
+                                entry["result"] = built
+                                await entry['lock'].set()
+            except Exception:
+                print(evt)
+                traceback.print_exc()
+            self._end_loop = True
 
     async def _write_loop(self):
         while not self._end_loop:
-            if self._messages:
+            if self._messages and self._sock:
                 msg = self._messages.pop(0)
-                await self._sock.send_all(msg)
+                await self._sock.send(msg)
                 await anyio.sleep(max(0.3, 0.05 * len(msg)))
             else:
                 await anyio.sleep(0.01)
@@ -143,7 +143,7 @@ class APIHandler:
             await task_group.spawn(self._write_loop)
 
     async def setup(self):
-        self._sock = await anyio.connect_tcp(self.HOST, self.PORT)
+        pass  # self._sock = await anyio.connect_tcp(self.HOST, self.PORT)
 
     def _send(self, message: bytes):
         self._messages.append(message)

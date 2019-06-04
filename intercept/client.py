@@ -6,17 +6,18 @@ from typing import T, Dict, Callable
 import anyio
 
 # Intercept Client Internals
+import asks
+
 from intercept.api_handler import APIHandler
 from intercept.data_format import DataFormat
 from intercept.events import Event, AuthEvent, CommandEvent, MessageEvent
 
 
 class Client:
-    def __init__(self, username: str, password: str, register: bool = False,
+    def __init__(self, token: str,
                  handle_data: DataFormat = DataFormat.CLEAN):
-        self.username = username
-        self.password = password
-        self.register = register
+        self.token = token
+        # self.register = register
 
         self.handler = APIHandler(self, handle_data)
         self._events: Dict[str, Callable[[Event], None]] = {}
@@ -43,24 +44,31 @@ class Client:
         return await self.wait_for(command=key, type_=CommandEvent)
 
     async def login(self):
-        key = "register" if self.register else "login"
+        # await asks.get("https://intercept.mudjs.net/store?token="+self.token)
+        self.handler.send_data({
+            "request": "auth",
+            "key": self.token
+        })
+
+        auth = await self.wait_for(event="auth")
 
         self.handler.send_data({
             "request": "auth",
-            key: {
-                "username": self.username,
-                "password": self.password
-            }
-        })
-
-        auth = await self.wait_for(event="auth", type_=AuthEvent)
-
-        self.handler.send_data({
-            "request": "connect",
             "token": auth.token
         })
 
-        await self.wait_for(event="connect")
+        await self.wait_for(event="auth")
+
+        self.handler.send_data({
+            "request": "systems"
+        })
+
+        systems = await self.wait_for(event="systems")
+        connect = [sys for sys in systems.systems if sys.type == "main"][0]
+        self.handler.send_data({
+            "request": "connect",
+            "system": connect.id
+        })
 
         if hasattr(self, "event_ready"):
             func = getattr(self, "event_ready")
@@ -90,20 +98,19 @@ class Client:
 
 
 if __name__ == "__main__":
-    with open("config.txt") as f:
-        client = Client(*f.read().split("|"), handle_data=DataFormat.ANSI)
-
+    client = Client("TOKEN", handle_data=DataFormat.ANSI)
 
     @client.event
     async def on_event(event):
+        print(event)
         if isinstance(event, MessageEvent):
             print(event.msg)
 
 
     @client.event
     async def event_ready():
-        await client.command("slaves list")
-        # client.stop()
+        await client.command("curl admin.hope.xyz")
+        client.stop()
 
 
     client.run()
