@@ -10,7 +10,7 @@ import asyncwebsockets as aws
 # Intercept Client Internals
 from intercept.data_format import DataFormat
 from intercept.events import (Event, AuthEvent, ChatEvent, InfoEvent, CommandEvent, ConnectEvent, BroadcastEvent,
-                              ConnectedEvent, TraceStartEvent, TraceCompleteEvent, SystemEvent)
+                              ConnectedEvent, TraceStartEvent, TraceCompleteEvent, SystemEvent, ErrorEvent, ConfigEvent)
 from intercept.utils import without_color_codes, converted_color_codes
 
 try:
@@ -32,6 +32,8 @@ class APIHandler:
         'traceComplete': TraceCompleteEvent,
         'chat': ChatEvent,
         'systems': SystemEvent,
+        'error': ErrorEvent,
+        'cfg': ConfigEvent
     }
 
     def __init__(self, client, fmt: DataFormat = DataFormat.CLEAN, bot=True, bufsize: int = 2 ** 24):
@@ -130,7 +132,7 @@ class APIHandler:
         self._locks.append(entry)
         await lock.wait()
 
-        assert isinstance(entry["result"], type_)
+        assert isinstance(entry["result"], (type_, ErrorEvent))
 
         return entry["result"]
 
